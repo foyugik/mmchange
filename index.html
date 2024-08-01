@@ -24,6 +24,11 @@
         button:hover {
             background-color: #0056b3;
         }
+        #status {
+            margin-top: 20px;
+            font-size: 18px;
+            color: green;
+        }
     </style>
 </head>
 <body>
@@ -31,16 +36,18 @@
 
     <button id="connectWalletBtn">Connect Wallet</button>
 
-    <button id="baseNetworkBtn">Switch to Base</button>
-    <button id="optimismNetworkBtn">Switch to Optimism</button>
-    <button id="polygonNetworkBtn">Switch to Polygon</button>
-    <button id="arbitrumNetworkBtn">Switch to Arbitrum</button>
-    <button id="avalancheNetworkBtn">Switch to Avalanche</button>
-    <button id="bscNetworkBtn">Switch to BSC</button>
-    <button id="ethereumNetworkBtn">Switch to Ethereum</button>
-    <button id="zksyncNetworkBtn">Switch to Zksync</button>
-    <button id="lineaNetworkBtn">Switch to Linea</button>
-    <button id="scrollNetworkBtn">Switch to Scroll</button>
+    <button id="baseNetworkBtn" disabled>Switch to Base</button>
+    <button id="optimismNetworkBtn" disabled>Switch to Optimism</button>
+    <button id="polygonNetworkBtn" disabled>Switch to Polygon</button>
+    <button id="arbitrumNetworkBtn" disabled>Switch to Arbitrum</button>
+    <button id="avalancheNetworkBtn" disabled>Switch to Avalanche</button>
+    <button id="bscNetworkBtn" disabled>Switch to BSC</button>
+    <button id="ethereumNetworkBtn" disabled>Switch to Ethereum</button>
+    <button id="zksyncNetworkBtn" disabled>Switch to Zksync</button>
+    <button id="lineaNetworkBtn" disabled>Switch to Linea</button>
+    <button id="scrollNetworkBtn" disabled>Switch to Scroll</button>
+
+    <div id="status">Wallet not connected</div>
 
     <script>
         // Задаем сети
@@ -162,21 +169,31 @@
             if (typeof window.ethereum !== 'undefined') {
                 try {
                     await ethereum.request({ method: 'eth_requestAccounts' });
-                    alert('Wallet connected successfully');
+                    
+                    // Изменение текста кнопки и статуса после подключения
+                    document.getElementById('connectWalletBtn').innerText = 'Wallet Connected';
+                    document.getElementById('status').innerText = 'Wallet connected successfully';
+                    enableNetworkButtons();
                 } catch (error) {
                     console.error('Error connecting wallet:', error.message);
-                    alert('Error connecting wallet: ' + error.message);
+                    document.getElementById('status').innerText = 'Connection failed: User rejected the request';
                 }
             } else {
-                alert('MetaMask is not installed. Please install it to use this feature.');
+                document.getElementById('status').innerText = 'MetaMask is not installed. Please install it to use this feature.';
             }
+        }
+
+        // Функция для включения кнопок после подключения
+        function enableNetworkButtons() {
+            const buttons = document.querySelectorAll('button[id$="NetworkBtn"]');
+            buttons.forEach(button => button.disabled = false);
         }
 
         // Функция для переключения сети
         async function switchNetwork(chain) {
             const network = networks[chain];
             if (!network) {
-                alert('Network not supported');
+                document.getElementById('status').innerText = 'Network not supported';
                 return;
             }
 
@@ -185,10 +202,10 @@
                     method: 'wallet_addEthereumChain',
                     params: [network],
                 });
-                alert(`Switched to ${network.chainName} successfully`);
+                document.getElementById('status').innerText = `Switched to ${network.chainName} successfully`;
             } catch (error) {
                 console.error(`Error switching to ${network.chainName}:`, error.message);
-                alert(`Error switching network: ${error.message}`);
+                document.getElementById('status').innerText = `Error switching network: ${error.message}`;
             }
         }
 
