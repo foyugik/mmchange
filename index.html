@@ -7,28 +7,138 @@
 </head>
 <body>
     <h1>Switch Network in MetaMask</h1>
-    <button id="switchNetworkBtn">Switch to Base Network</button>
+
+    <button id="baseNetworkBtn">Base</button>
+    <button id="optimismNetworkBtn">Optimism</button>
+    <button id="polygonNetworkBtn">Polygon</button>
+    <button id="arbitrumNetworkBtn">Arbitrum</button>
+    <button id="avalancheNetworkBtn">Avalanche</button>
+    <button id="bscNetworkBtn">BSC</button>
+    <button id="ethereumNetworkBtn">Ethereum</button>
+    <button id="zksyncNetworkBtn">Zksync</button>
+    <button id="lineaNetworkBtn">Linea</button>
+    <button id="scrollNetworkBtn">Scroll</button>
 
     <script>
-        const baseNetwork = {
-            chainId: '0x2105',
-            chainName: 'Base',
-            nativeCurrency: {
-                name: 'ETH',
-                symbol: 'ETH',
-                decimals: 18,
+        const networks = {
+            base: {
+                chainId: '0x2105',
+                chainName: 'Base',
+                nativeCurrency: {
+                    name: 'ETH',
+                    symbol: 'ETH',
+                    decimals: 18,
+                },
+                rpcUrls: ['https://mainnet.base.org'],
+                blockExplorerUrls: ['https://basescan.org'],
             },
-            rpcUrls: ['https://rpc.ankr.com/base/1e0fbe7217662234ccddd9967f6dd4397a2f43090ac00324a98c900a85445c2f'],
-            blockExplorerUrls: ['https://basescan.org'],
+            optimism: {
+                chainId: '0xa',
+                chainName: 'OP Mainnet',
+                nativeCurrency: {
+                    name: 'ETH',
+                    symbol: 'ETH',
+                    decimals: 18,
+                },
+                rpcUrls: ['https://optimism.blockpi.network/v1/rpc/public'],
+                blockExplorerUrls: ['https://optimistic.etherscan.io'],
+            },
+            polygon: {
+                chainId: '0x89',
+                chainName: 'Polygon Mainnet',
+                nativeCurrency: {
+                    name: 'MATIC',
+                    symbol: 'MATIC',
+                    decimals: 18,
+                },
+                rpcUrls: ['https://polygon.blockpi.network/v1/rpc/public'],
+                blockExplorerUrls: ['https://polygonscan.com'],
+            },
+            arbitrum: {
+                chainId: '0xa4b1',
+                chainName: 'Arbitrum One',
+                nativeCurrency: {
+                    name: 'ETH',
+                    symbol: 'ETH',
+                    decimals: 18,
+                },
+                rpcUrls: ['https://arbitrum.blockpi.network/v1/rpc/public'],
+                blockExplorerUrls: ['https://arbiscan.io'],
+            },
+            avalanche: {
+                chainId: '0xa86a',
+                chainName: 'Avalanche C-Chain',
+                nativeCurrency: {
+                    name: 'AVAX',
+                    symbol: 'AVAX',
+                    decimals: 18,
+                },
+                rpcUrls: ['https://avalanche.blockpi.network/v1/rpc/public'],
+                blockExplorerUrls: ['https://snowtrace.io'],
+            },
+            bsc: {
+                chainId: '0x38',
+                chainName: 'BNB Smart Chain Mainnet',
+                nativeCurrency: {
+                    name: 'BNB',
+                    symbol: 'BNB',
+                    decimals: 18,
+                },
+                rpcUrls: ['https://rpc.ankr.com/bsc'],
+                blockExplorerUrls: ['https://bscscan.com/'],
+            },
+            ethereum: {
+                chainId: '0x1',
+                chainName: 'Ethereum Mainnet',
+                nativeCurrency: {
+                    name: 'ETH',
+                    symbol: 'ETH',
+                    decimals: 18,
+                },
+                rpcUrls: ['https://ethereum.blockpi.network/v1/rpc/public'],
+                blockExplorerUrls: ['https://etherscan.io'],
+            },
+            zksync: {
+                chainId: '0x144',
+                chainName: 'zkSync Era Mainnet',
+                nativeCurrency: {
+                    name: 'ETH',
+                    symbol: 'ETH',
+                    decimals: 18,
+                },
+                rpcUrls: ['https://mainnet.era.zksync.io'],
+                blockExplorerUrls: ['https://explorer.zksync.io'],
+            },
+            linea: {
+                chainId: '0xe708',
+                chainName: 'Linea Mainnet',
+                nativeCurrency: {
+                    name: 'ETH',
+                    symbol: 'ETH',
+                    decimals: 18,
+                },
+                rpcUrls: ['https://rpc.linea.build'],
+                blockExplorerUrls: ['https://lineascan.build'],
+            },
+            scroll: {
+                chainId: '0x82750',
+                chainName: 'Scroll Mainnet',
+                nativeCurrency: {
+                    name: 'ETH',
+                    symbol: 'ETH',
+                    decimals: 18,
+                },
+                rpcUrls: ['https://scroll.blockpi.network/v1/rpc/public'],
+                blockExplorerUrls: ['https://scrollscan.com/'],
+            }
         };
 
-        document.getElementById('switchNetworkBtn').addEventListener('click', async () => {
+        async function switchNetwork(network) {
             try {
-                // Проверьте, что MetaMask установлен
                 if (typeof window.ethereum !== 'undefined') {
-                    await ethereum.request({
+                    await window.ethereum.request({
                         method: 'wallet_addEthereumChain',
-                        params: [baseNetwork],
+                        params: [network],
                     });
                     alert('Network switched successfully');
                 } else {
@@ -38,7 +148,18 @@
                 console.error('Error switching network:', error);
                 alert('Error switching network: ' + error.message);
             }
-        });
+        }
+
+        document.getElementById('baseNetworkBtn').addEventListener('click', () => switchNetwork(networks.base));
+        document.getElementById('optimismNetworkBtn').addEventListener('click', () => switchNetwork(networks.optimism));
+        document.getElementById('polygonNetworkBtn').addEventListener('click', () => switchNetwork(networks.polygon));
+        document.getElementById('arbitrumNetworkBtn').addEventListener('click', () => switchNetwork(networks.arbitrum));
+        document.getElementById('avalancheNetworkBtn').addEventListener('click', () => switchNetwork(networks.avalanche));
+        document.getElementById('bscNetworkBtn').addEventListener('click', () => switchNetwork(networks.bsc));
+        document.getElementById('ethereumNetworkBtn').addEventListener('click', () => switchNetwork(networks.ethereum));
+        document.getElementById('zksyncNetworkBtn').addEventListener('click', () => switchNetwork(networks.zksync));
+        document.getElementById('lineaNetworkBtn').addEventListener('click', () => switchNetwork(networks.linea));
+        document.getElementById('scrollNetworkBtn').addEventListener('click', () => switchNetwork(networks.scroll));
     </script>
 </body>
 </html>
