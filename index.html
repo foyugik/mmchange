@@ -3,23 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Switch Network in MetaMask</title>
+    <title>Connect and Switch Network in MetaMask</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h1>Switch Network in MetaMask</h1>
+    <h1>Connect and Switch Network in MetaMask</h1>
 
-    <button id="baseNetworkBtn">Base</button>
-    <button id="optimismNetworkBtn">Optimism</button>
-    <button id="polygonNetworkBtn">Polygon</button>
-    <button id="arbitrumNetworkBtn">Arbitrum</button>
-    <button id="avalancheNetworkBtn">Avalanche</button>
-    <button id="bscNetworkBtn">BSC</button>
-    <button id="ethereumNetworkBtn">Ethereum</button>
-    <button id="zksyncNetworkBtn">Zksync</button>
-    <button id="lineaNetworkBtn">Linea</button>
-    <button id="scrollNetworkBtn">Scroll</button>
+    <button id="connectWalletBtn">Connect Wallet</button>
+
+    <button id="baseNetworkBtn">Switch to Base</button>
+    <button id="optimismNetworkBtn">Switch to Optimism</button>
+    <button id="polygonNetworkBtn">Switch to Polygon</button>
+    <button id="arbitrumNetworkBtn">Switch to Arbitrum</button>
+    <button id="avalancheNetworkBtn">Switch to Avalanche</button>
+    <button id="bscNetworkBtn">Switch to BSC</button>
+    <button id="ethereumNetworkBtn">Switch to Ethereum</button>
+    <button id="zksyncNetworkBtn">Switch to Zksync</button>
+    <button id="lineaNetworkBtn">Switch to Linea</button>
+    <button id="scrollNetworkBtn">Switch to Scroll</button>
 
     <script>
+        // Задаем сети
         const networks = {
             base: {
                 chainId: '0x2105',
@@ -29,7 +53,7 @@
                     symbol: 'ETH',
                     decimals: 18,
                 },
-                rpcUrls: ['https://mainnet.base.org'],
+                rpcUrls: ['https://rpc.ankr.com/base'],
                 blockExplorerUrls: ['https://basescan.org'],
             },
             optimism: {
@@ -40,7 +64,7 @@
                     symbol: 'ETH',
                     decimals: 18,
                 },
-                rpcUrls: ['https://optimism.blockpi.network/v1/rpc/public'],
+                rpcUrls: ['https://rpc.ankr.com/optimism'],
                 blockExplorerUrls: ['https://optimistic.etherscan.io'],
             },
             polygon: {
@@ -51,7 +75,7 @@
                     symbol: 'MATIC',
                     decimals: 18,
                 },
-                rpcUrls: ['https://polygon.blockpi.network/v1/rpc/public'],
+                rpcUrls: ['https://rpc.ankr.com/polygon'],
                 blockExplorerUrls: ['https://polygonscan.com'],
             },
             arbitrum: {
@@ -62,7 +86,7 @@
                     symbol: 'ETH',
                     decimals: 18,
                 },
-                rpcUrls: ['https://arbitrum.blockpi.network/v1/rpc/public'],
+                rpcUrls: ['https://rpc.ankr.com/arbitrum'],
                 blockExplorerUrls: ['https://arbiscan.io'],
             },
             avalanche: {
@@ -73,7 +97,7 @@
                     symbol: 'AVAX',
                     decimals: 18,
                 },
-                rpcUrls: ['https://avalanche.blockpi.network/v1/rpc/public'],
+                rpcUrls: ['https://rpc.ankr.com/avalanche'],
                 blockExplorerUrls: ['https://snowtrace.io'],
             },
             bsc: {
@@ -85,7 +109,7 @@
                     decimals: 18,
                 },
                 rpcUrls: ['https://rpc.ankr.com/bsc'],
-                blockExplorerUrls: ['https://bscscan.com/'],
+                blockExplorerUrls: ['https://bscscan.com'],
             },
             ethereum: {
                 chainId: '0x1',
@@ -95,7 +119,7 @@
                     symbol: 'ETH',
                     decimals: 18,
                 },
-                rpcUrls: ['https://ethereum.blockpi.network/v1/rpc/public'],
+                rpcUrls: ['https://rpc.ankr.com/eth'],
                 blockExplorerUrls: ['https://etherscan.io'],
             },
             zksync: {
@@ -106,7 +130,7 @@
                     symbol: 'ETH',
                     decimals: 18,
                 },
-                rpcUrls: ['https://mainnet.era.zksync.io'],
+                rpcUrls: ['https://rpc.ankr.com/zksync_era'],
                 blockExplorerUrls: ['https://explorer.zksync.io'],
             },
             linea: {
@@ -128,38 +152,58 @@
                     symbol: 'ETH',
                     decimals: 18,
                 },
-                rpcUrls: ['https://scroll.blockpi.network/v1/rpc/public'],
-                blockExplorerUrls: ['https://scrollscan.com/'],
+                rpcUrls: ['https://rpc.scroll.io'],
+                blockExplorerUrls: ['https://scrollscan.com'],
             }
         };
 
-        async function switchNetwork(network) {
-            try {
-                if (typeof window.ethereum !== 'undefined') {
-                    await window.ethereum.request({
-                        method: 'wallet_addEthereumChain',
-                        params: [network],
-                    });
-                    alert('Network switched successfully');
-                } else {
-                    alert('MetaMask is not installed. Please install it to switch networks.');
+        // Функция для подключения к кошельку
+        async function connectWallet() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    await ethereum.request({ method: 'eth_requestAccounts' });
+                    alert('Wallet connected successfully');
+                } catch (error) {
+                    console.error('Error connecting wallet:', error.message);
+                    alert('Error connecting wallet: ' + error.message);
                 }
-            } catch (error) {
-                console.error('Error switching network:', error);
-                alert('Error switching network: ' + error.message);
+            } else {
+                alert('MetaMask is not installed. Please install it to use this feature.');
             }
         }
 
-        document.getElementById('baseNetworkBtn').addEventListener('click', () => switchNetwork(networks.base));
-        document.getElementById('optimismNetworkBtn').addEventListener('click', () => switchNetwork(networks.optimism));
-        document.getElementById('polygonNetworkBtn').addEventListener('click', () => switchNetwork(networks.polygon));
-        document.getElementById('arbitrumNetworkBtn').addEventListener('click', () => switchNetwork(networks.arbitrum));
-        document.getElementById('avalancheNetworkBtn').addEventListener('click', () => switchNetwork(networks.avalanche));
-        document.getElementById('bscNetworkBtn').addEventListener('click', () => switchNetwork(networks.bsc));
-        document.getElementById('ethereumNetworkBtn').addEventListener('click', () => switchNetwork(networks.ethereum));
-        document.getElementById('zksyncNetworkBtn').addEventListener('click', () => switchNetwork(networks.zksync));
-        document.getElementById('lineaNetworkBtn').addEventListener('click', () => switchNetwork(networks.linea));
-        document.getElementById('scrollNetworkBtn').addEventListener('click', () => switchNetwork(networks.scroll));
+        // Функция для переключения сети
+        async function switchNetwork(chain) {
+            const network = networks[chain];
+            if (!network) {
+                alert('Network not supported');
+                return;
+            }
+
+            try {
+                await ethereum.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [network],
+                });
+                alert(`Switched to ${network.chainName} successfully`);
+            } catch (error) {
+                console.error(`Error switching to ${network.chainName}:`, error.message);
+                alert(`Error switching network: ${error.message}`);
+            }
+        }
+
+        // Привязка кнопок к функциям
+        document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
+        document.getElementById('baseNetworkBtn').addEventListener('click', () => switchNetwork('base'));
+        document.getElementById('optimismNetworkBtn').addEventListener('click', () => switchNetwork('optimism'));
+        document.getElementById('polygonNetworkBtn').addEventListener('click', () => switchNetwork('polygon'));
+        document.getElementById('arbitrumNetworkBtn').addEventListener('click', () => switchNetwork('arbitrum'));
+        document.getElementById('avalancheNetworkBtn').addEventListener('click', () => switchNetwork('avalanche'));
+        document.getElementById('bscNetworkBtn').addEventListener('click', () => switchNetwork('bsc'));
+        document.getElementById('ethereumNetworkBtn').addEventListener('click', () => switchNetwork('ethereum'));
+        document.getElementById('zksyncNetworkBtn').addEventListener('click', () => switchNetwork('zksync'));
+        document.getElementById('lineaNetworkBtn').addEventListener('click', () => switchNetwork('linea'));
+        document.getElementById('scrollNetworkBtn').addEventListener('click', () => switchNetwork('scroll'));
     </script>
 </body>
 </html>
