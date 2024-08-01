@@ -50,7 +50,6 @@
     <div id="status">Wallet not connected</div>
 
     <script>
-        // Задаем сети
         const networks = {
             base: {
                 chainId: '0x2105',
@@ -168,12 +167,16 @@
         async function connectWallet() {
             if (typeof window.ethereum !== 'undefined') {
                 try {
-                    await ethereum.request({ method: 'eth_requestAccounts' });
+                    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
                     
-                    // Изменение текста кнопки и статуса после подключения
-                    document.getElementById('connectWalletBtn').innerText = 'Wallet Connected';
-                    document.getElementById('status').innerText = 'Wallet connected successfully';
-                    enableNetworkButtons();
+                    // Проверка, получен ли хотя бы один аккаунт
+                    if (accounts.length > 0) {
+                        document.getElementById('connectWalletBtn').innerText = 'Wallet Connected';
+                        document.getElementById('status').innerText = 'Wallet connected successfully';
+                        enableNetworkButtons();
+                    } else {
+                        document.getElementById('status').innerText = 'No accounts found. Please check MetaMask.';
+                    }
                 } catch (error) {
                     console.error('Error connecting wallet:', error.message);
                     document.getElementById('status').innerText = 'Connection failed: User rejected the request';
@@ -203,24 +206,3 @@
                     params: [network],
                 });
                 document.getElementById('status').innerText = `Switched to ${network.chainName} successfully`;
-            } catch (error) {
-                console.error(`Error switching to ${network.chainName}:`, error.message);
-                document.getElementById('status').innerText = `Error switching network: ${error.message}`;
-            }
-        }
-
-        // Привязка кнопок к функциям
-        document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
-        document.getElementById('baseNetworkBtn').addEventListener('click', () => switchNetwork('base'));
-        document.getElementById('optimismNetworkBtn').addEventListener('click', () => switchNetwork('optimism'));
-        document.getElementById('polygonNetworkBtn').addEventListener('click', () => switchNetwork('polygon'));
-        document.getElementById('arbitrumNetworkBtn').addEventListener('click', () => switchNetwork('arbitrum'));
-        document.getElementById('avalancheNetworkBtn').addEventListener('click', () => switchNetwork('avalanche'));
-        document.getElementById('bscNetworkBtn').addEventListener('click', () => switchNetwork('bsc'));
-        document.getElementById('ethereumNetworkBtn').addEventListener('click', () => switchNetwork('ethereum'));
-        document.getElementById('zksyncNetworkBtn').addEventListener('click', () => switchNetwork('zksync'));
-        document.getElementById('lineaNetworkBtn').addEventListener('click', () => switchNetwork('linea'));
-        document.getElementById('scrollNetworkBtn').addEventListener('click', () => switchNetwork('scroll'));
-    </script>
-</body>
-</html>
