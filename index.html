@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Switch Network in MetaMask</title>
+</head>
+<body>
+    <h1>Switch Network in MetaMask</h1>
+    <button id="switchNetworkBtn">Switch to Base Network</button>
+
+    <script>
+        const baseNetwork = {
+            chainId: '0x2105',
+            chainName: 'Base',
+            nativeCurrency: {
+                name: 'ETH',
+                symbol: 'ETH',
+                decimals: 18,
+            },
+            rpcUrls: ['https://rpc.ankr.com/base/1e0fbe7217662234ccddd9967f6dd4397a2f43090ac00324a98c900a85445c2f'],
+            blockExplorerUrls: ['https://basescan.org'],
+        };
+
+        document.getElementById('switchNetworkBtn').addEventListener('click', async () => {
+            try {
+                // Проверьте, что MetaMask установлен
+                if (typeof window.ethereum !== 'undefined') {
+                    await ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [baseNetwork],
+                    });
+                    alert('Network switched successfully');
+                } else {
+                    alert('MetaMask is not installed. Please install it to switch networks.');
+                }
+            } catch (error) {
+                console.error('Error switching network:', error);
+                alert('Error switching network: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
